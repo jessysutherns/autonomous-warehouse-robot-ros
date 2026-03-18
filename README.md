@@ -1,4 +1,4 @@
-# ROS2 Autonomous Warehouse Robot (Perception + Manipulation)
+# Autonomous Warehouse Robot (ROS-Based Perception + Manipulation)
 
 ## Overview
 
@@ -6,7 +6,7 @@ This project presents an autonomous mobile robot system developed using ROS for 
 
 The robot is capable of detecting, picking, transporting, and placing objects within a simulated warehouse environment. The system integrates computer vision, control, and robotic manipulation into a complete end-to-end pipeline.
 
-This project demonstrates a complete perception–planning–control pipeline for autonomous robotic manipulation in warehouse environments.
+The system combines perception, control, and manipulation into a unified robotic pipeline, reflecting real-world warehouse automation systems.
 
 ---
 
@@ -146,26 +146,35 @@ See demo video in:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/jessysutherns/ros2-autonomous-warehouse-robot.git
+git clone https://github.com/jessysutherns/autonomous-warehouse-robot-ros.git
 ```
 
 2. Move to your ROS workspace:
 
-```bash
+```bash id="l2pt0b"
 cd ~/catkin_ws/src
 ```
 
 3. Build the workspace:
 
-```bash
+```bash id="xk6a7c"
 catkin_make
 ```
 
 4. Launch the simulation:
 
-```bash
+```bash id="ntd0gn"
 roslaunch warehouse_robot warehouse_robot.launch
 ```
+
+---
+
+## Project Highlights
+
+* End-to-end robotic pipeline (perception → planning → control)
+* Integration of computer vision with robotic manipulation
+* Custom robot modelling using URDF
+* Simulation-based validation in Gazebo
 
 ---
 
