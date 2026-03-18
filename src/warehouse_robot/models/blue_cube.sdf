@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="blue_cube">
+    <pose>1.0 0.0 0.075 0 0 0</pose>
+    <link name="link">
+      <inertial>
+        <mass value="0.1"/>
+        <inertia>
+          <ixx>0.000375</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.000375</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.000375</izz>
+        </inertia>
+      </inertial>
+      <visual name="visual">
+        <geometry>
+          <box><size>0.15 0.15 0.15</size></box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Blue</name>
+          </script>
+        </material>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <box><size>0.15 0.15 0.15</size></box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10.0</mu>  <!-- Max friction -->
+              <mu2>10.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>50000.0</kp> <!-- Extremely stiff -->
+              <kd>1000.0</kd>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<robot name="turtlebot3_waffle_with_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="camera_pitch" value="-0.5"/>
+  <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro"/>
+
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <rosNamespace>/</rosNamespace>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <leftJoint>wheel_left_joint</leftJoint>
+      <rightJoint>wheel_right_joint</rightJoint>
+      <wheelSeparation>0.287</wheelSeparation>
+      <wheelDiameter>0.066</wheelDiameter>
+      <publishOdomTF>true</publishOdomTF>
+      <publishOdom>true</publishOdom>
+      <publishWheelTF>true</publishWheelTF>
+      <legacyMode>false</legacyMode>
+      <odometrySource>world</odometrySource>
+      <updateRate>1000</updateRate>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+      <controlPeriod>0.001</controlPeriod>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+  <link name="arm_base_link">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+    <visual>
+      <geometry><box size="0.05 0.05 0.2"/></geometry>
+      <material name="silver"><color rgba="0.75 0.75 0.75 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.05 0.05 0.2"/></geometry>
+    </collision>
+  </link>
+  <joint name="arm_base_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_base_link"/>
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+  </joint>
+
+  <link name="arm_link">
+    <inertial>
+      <mass value="0.3"/>
+      <inertia ixx="0.0005" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.0005"/>
+    </inertial>
+    <visual>
+      <geometry><box size="0.02 0.02 0.3"/></geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.02 0.02 0.3"/></geometry>
+    </collision>
+  </link>
+  <joint name="arm_joint" type="revolute">
+    <parent link="arm_base_link"/>
+    <child link="arm_link"/>
+    <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.0" upper="2.0" effort="20" velocity="1"/> <!-- Increased effort -->
+  </joint>
+
+  <link name="suction_pad_link">
+    <inertial>
+      <mass value="0.02"/>
+      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
+    </inertial>
+    <visual>
+      <geometry><box size="0.15 0.15 0.01"/></geometry>
+      <material name="black"><color rgba="0 0 0 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.15 0.15 0.01"/></geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>10.0</mu>  <!-- Max friction -->
+            <mu2>10.0</mu2>
+          </ode>
+        </friction>
+        <contact>
+          <ode>
+            <kp>50000.0</kp> <!-- Extremely stiff -->
+            <kd>1000.0</kd>
+          </ode>
+        </contact>
+      </surface>
+    </collision>
+  </link>
+  <joint name="arm_to_suction" type="fixed">
+    <parent link="arm_link"/>
+    <child link="suction_pad_link"/>
+    <origin xyz="0.3 0 -0.005" rpy="0 0 0"/>
+  </joint>
+
+  <link name="basket_link">
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.0005" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.0005"/>
+    </inertial>
+    <visual>
+      <geometry><box size="0.1 0.1 0.05"/></geometry>
+      <material name="red"><color rgba="1 0 0 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.1 0.1 0.05"/></geometry>
+    </collision>
+  </link>
+  <joint name="basket_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="basket_link"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <transmission name="arm_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="arm_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="arm_motor">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <gazebo reference="arm_joint">
+    <implicitSpringDamper>true</implicitSpringDamper>
+    <dampingFactor>1.0</dampingFactor> <!-- Increased damping -->
+    <kp>500.0</kp> <!-- Stiffer joint -->
+    <kd>50.0</kd>
+  </gazebo>
+</robot>
